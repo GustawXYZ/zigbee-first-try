@@ -1,0 +1,27 @@
+services:
+    zigbee2mqtt:
+        container_name: zigbee2mqtt
+        image: ghcr.io/koenkk/zigbee2mqtt
+        restart: unless-stopped
+        volumes:
+            - ./data:/app/data
+            - /run/udev:/run/udev:ro
+        ports:
+            # Frontend port
+            - 8080:8080
+        environment:
+            - TZ=Europe/Berlin
+        devices:
+            # Make sure this matched your adapter location
+            - "/dev/serial/by-id/usb-Espressif_USB_JTAG_serial_debug_unit_54\\:32\\:04\\:33\\:5E\\:90-if00:/dev/ttyACM0"
+    mosquitto:
+          image: eclipse-mosquitto
+          hostname: mosquitto
+          container_name: mosquitto
+          restart: unless-stopped
+          ports:
+            - "1883:1883"
+            - "9001:9001"
+          volumes:
+            - ./mosquitto:/etc/mosquitto
+            - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
